@@ -38,14 +38,29 @@ class App extends React.Component {
   // returning the html element using jsx
   // if you are including a class, we need to use "className" instead of just class
   // <h1 className="name"> ...
+  // we can access props by interpolating with curly brackets
   render(){
+    let txt = this.props.txt;
     return (
       <div>
-        <h1>Hello World</h1>
+        <h1>{txt}</h1>
         <b>Bold</b>
       </div>
     )
   }
+}
+
+// we can define the properties we'll be looking for in our componenet
+// by adding property to our compoenent propTypes.
+// We can add .isRequired to the PropType
+App.proTypes = {
+  txt: React.PropTypes.string,
+  cat: React.PropTypes.number.isRequired
+}
+
+// We can set default properties
+App.defaultProps = {
+  txt: "this is the default txt"
 }
 
 // Export the componenet we created
