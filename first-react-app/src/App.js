@@ -1,18 +1,30 @@
 import React from 'react';
-// Access nested data with reacts props.children
+
 class App extends React.Component {
   render() {
-    return <Button>I <Heart/> React</Button>
+    return <Title text="12345"/>
   }
 }
 
-const Button = (props) => <button>{props.children}</button>
+const Title = (props) => <h1>Title: {props.text}</h1>
 
-class Heart extends React.Component {
-  render() {
-    return <span>&hearts;</span>
+// What we can do is pass in a customized function
+Title.propTypes = {
+  text(props, propName, component) {
+    if (!(propName in props)) {
+      return new Error(`missing ${propName}`)
+    }
+    if (props[propName].length < 6) {
+      return new Error(`${propName} was too short`)
+    }
   }
 }
+
+// The best we can do here, is to make it required
+// Title.propTypes = {
+//   text: React.PropTypes.string.isRequired
+// }
+
 
 // Export the componenet we created
 export default App
