@@ -6,21 +6,26 @@ class App extends React.Component {
     super(); // give 'this' the context within our component, rather than the parent?
     this.state = {
       txt: 'this is the state txt',
-      cat: 0
     }
   }
   update(e) {
     this.setState({txt: e.target.value})
   }
+  // using a react component to create other child components
   render() {
     return (
       <div>
-        <input type="text" onChange={this.update.bind(this)}/>
-        <h1>{this.state.txt} - {this.state.cat}</h1>
+        <h1>{this.state.txt}</h1>
+        <Widget update={this.update.bind(this)}/>
+        <Widget update={this.update.bind(this)}/>
+        <Widget update={this.update.bind(this)}/>
       </div>
     )
   }
 }
+
+const Widget = (props) =>
+  <input type="text" onChange={props.update}/>
 
 // Export the componenet we created
 export default App
