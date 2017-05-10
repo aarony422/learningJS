@@ -1,34 +1,42 @@
 import React from 'react';
-// synthetic event system, normalizes all events we want to use across
-// different browsers
+// refs reference a node or instance of a componenet in our app
+import ReactDOM from 'react-dom'
 class App extends React.Component {
+  // To set initial state, include a constructor
   constructor() {
     super();
-    this.state = {currentEvent: '---'};
-    this.update = this.update.bind(this);
+    this.state = {a: ''}
   }
-  update(e) {
-    this.setState({currentEvent: e.type})
+  update() {
+    this.setState({
+      a: this.a.refs.input.value,
+      b: this.refs.b.value // this.refs.b returns the componenet with that ref name
+    })
   }
   render() {
+    // ref attribute can also take a callback
     return (
       <div>
-        <textarea
-          onKeyPress={this.update}
-          onCopy={this.update}
-          onCut={this.update}
-          onPaste={this.update}
-          onFocus={this.update}
-          onBlur={this.update}
-          onDoubleClick={this.update}
-          onTouchStart={this.update}
-          onTouchMove={this.update}
-          onTouchEnd={this.update}
-          cols="30"
-          rows="10" />
-        <h1>{this.state.currentEvent}</h1>
+        <Input
+          ref={ component => this.a = component}
+          update={this.update.bind(this)}
+        /> {this.state.a}
+        <hr />
+        <input
+          ref="b"
+          type = "text"
+          onChange={this.update.bind(this)}
+        /> {this.state.b}
       </div>
     )
+  }
+}
+
+// refs can also reference an instance of another component
+
+class Input extends React.Component {
+  render() {
+    return <div><input ref="input" type="text" onChange={this.props.update}/></div>
   }
 }
 
