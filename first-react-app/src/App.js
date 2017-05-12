@@ -1,65 +1,40 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-/*
- * mounting: when component is added to DOM
- * un-mounting: when component is removed from DOM
- * life-cycle methods we can access during this process
- *
-*/
+// updating lifecyle methods
 class App extends React.Component {
   constructor() {
     super();
-    this.state = {val: 0}
-    this.update = this.update.bind(this);
-  }
-  update() {
-    this.setState({val: this.state.val + 1});
-  }
-  // fires right before the componenet is mounted to the DOM
-  // while render will fire multiple times, componenetWillMount only fires once
-  componentWillMount() {
-    // Have access to state and props, but not the DOM representation of the
-    // componenet because it hasn't been mounted yet!
-    console.log('componentWillMount');
-    this.setState({m:2});
-  }
-  // fires after componenet did mount to the DOM
-  // Also only fire once
-  componentDidMount() {
-    // access to our componenet in the DOm
-    console.log('componenetDidMount');
-    console.log(ReactDOM.findDOMNode(this));
-    this.inc = setInterval(this.update, 500);
-  }
-  // before componenet leaves DOM
-  componentWillUnmount() {
-    // opportunity to clean up any running processes
-    console.log('componentWillUnmount');
-    clearInterval(this.inc);
+    this.state = {increasing: false};
   }
   render() {
-    console.log('render');
-    return <button onClick={this.update}>{this.state.val * this.state.m}</button>
-  }
-}
-
-class Wrapper extends React.Component {
-  render() {
+    console.log(this.state.increasing);
     return (
-      <div>
-        <button onClick={this.mount.bind(this)}>Mount</button>
-        <button onClick={this.unmount.bind(this)}>Unmount</button>
-        <div id='a'></div>
-      </div>
+      <button onClick={this.update.bind(this)}>
+        {this.props.val}
+      </button>
     )
   }
-  mount() {
-    ReactDOM.render(<App />, document.getElementById('a'))
+  update() {
+    ReactDOM.render(
+      <App val={this.props.val+1}/>,
+      document.getElementById('root'));
   }
-  unmount() {
-    ReactDOM.unmountComponentAtNode(document.getElementById('a'))
+  // new props are coming in
+  componentWillReceiveProps(nextProps) {
+    this.setState({increasing: nextProps.val > this.props.val});
+  }
+  // takes in nextProp and nextState
+  // component will only update if function returns true
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.val % 5 === 0;
+  }
+  // takes in prevProps and prevState
+  componentDidUpdate(prevProps, prevState) {
+    console.log(`prevProps: ${prevProps.val}`)
   }
 }
 
+App.defaultProps = {val:0};
+
 // Export the componenet we created
-export default Wrapper
+export default App
