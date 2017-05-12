@@ -1,44 +1,57 @@
 import React from 'react';
-// refs reference a node or instance of a componenet in our app
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
+/*
+ * mounting: when component is added to DOM
+ * un-mounting: when component is removed from DOM
+ * life-cycle methods we can access during this process
+ *
+*/
 class App extends React.Component {
-  // To set initial state, include a constructor
   constructor() {
     super();
-    this.state = {a: ''}
+    this.state = {val: 0}
+    this.update = this.update.bind(this);
   }
   update() {
-    this.setState({
-      a: this.a.refs.input.value,
-      b: this.refs.b.value // this.refs.b returns the componenet with that ref name
-    })
+    this.setState({val: this.state.val + 1});
+  }
+  // fires right before the componenet is mounted to the DOM
+  // while render will fire multiple times, componenetWillMount only fires once
+  componentWillMount() {
+    console.log('componentWillMount');
+  }
+  // fires after componenet did mount to the DOM
+  // Also only fire once
+  componenetDidMount() {
+    console.log('componenetDidMount');
+  }
+  // before componenet leaves DOM
+  componenetWillUnmount() {
+    console.log('componentWillUnmount');
   }
   render() {
-    // ref attribute can also take a callback
-    return (
-      <div>
-        <Input
-          ref={ component => this.a = component}
-          update={this.update.bind(this)}
-        /> {this.state.a}
-        <hr />
-        <input
-          ref="b"
-          type="text"
-          onChange={this.update.bind(this)}
-        /> {this.state.b}
-      </div>
-    )
+    console.log('render');
+    return <button onClick={this.update}>{this.state.val}</button>
   }
 }
 
-// refs can also reference an instance of another component
-
-class Input extends React.Component {
+class Wrapper extends React.Component {
   render() {
-    return <div><input ref="input" type="text" onChange={this.props.update}/></div>
+    return (
+      <div>
+        <button onClick={this.mount.bind(this)}>Mount</button>
+        <button onClick={this.unmount.bind(this)}>Unmount</button>
+        <div id='a'></div>
+      </div>
+    )
+  }
+  mount() {
+    ReactDOM.render(<App />, document.getElementById('a'))
+  }
+  unmount() {
+    ReactDOM.unmountComponentAtNode(document.getElementById('a'))
   }
 }
 
 // Export the componenet we created
-export default App
+export default Wrapper
