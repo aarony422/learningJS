@@ -24,7 +24,7 @@ class App extends React.Component {
         <hr />
         <input
           ref="b"
-          type = "text"
+          type="text"
           onChange={this.update.bind(this)}
         /> {this.state.b}
       </div>
