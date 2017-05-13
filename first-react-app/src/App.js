@@ -1,67 +1,46 @@
 import React from 'react';
-// Higher order components
-// share common functionality or information between components
-
-// Notice that we defined HOC to have state and update method ONCE
-// and passing Label and Button into HOC gives them that functionality
-
-// HOC = higher order component
-// take in a component, and return a new component
-const HOC = (InnerComponent) => class extends React.Component {
+import './App.css'
+// create in broswer JSX transpiler
+class App extends React.Component {
   constructor() {
     super();
-    this.state = {count: 0}
+    this.state = {
+      input: '/* add your jsx here */',
+      output: '',
+      err: ''
+    }
   }
-  update() {
-    this.setState({count: this.state.count + 1})
-  }
-  componentWillMount() {
-    console.log('will mount')
-  }
-  render() {
-    return (
-      <InnerComponent
-        {...this.props}
-        {...this.state}
-        update={this.update.bind(this)}
-      />
-    )
-  }
-}
 
-class App extends React.Component {
+  update(e) {
+    let code = e.target.value;
+    try {
+      this.setState({
+        output: window.Babel
+                      .transform(code, { presets: ['es2015', 'react']})
+                      .code,
+        err: ''
+      })
+    } catch (err) {
+      this.setState({err: err.message});
+    }
+  }
+
   render() {
     return (
       <div>
-        <Button>button</Button>
-        <hr/>
-        <LabelHOC>label</LabelHOC>
+        <header>{this.state.err}</header>
+        <div className="container">
+          <textarea
+            onChange={this.update.bind(this)}
+            defaultValue={this.state.input}/>
+          <pre>
+            {this.state.output}
+          </pre>
+        </div>
       </div>
     )
   }
 }
-
-// Stateless function component
-const Button = HOC((props) => <button
-                                onClick={props.update}>
-                                {props.children} - {props.count}
-                              </button>)
-
-// Full class component
-class Label extends React.Component {
-  componentWillMount() {
-    console.log('label will mount')
-  }
-  render() {
-    return (
-      <label onMouseMove={this.props.update}>
-        {this.props.children} - {this.props.count}
-      </label>
-    )
-  }
-}
-
-const LabelHOC = HOC(Label)
 
 // Export the componenet we created
 export default App
