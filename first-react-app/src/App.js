@@ -1,28 +1,41 @@
 import React from 'react';
-// iterate over children of component
-// if there's only 1 child, we can't map over the children
-// to solve that, React has React.Children
+// extend functionality of children components
 class App extends React.Component {
   render() {
     return (
-      <Parent>
-        <div className="childA"></div>
-      </Parent>
+      <Buttons>
+        <button value="A">A</button>
+        <button value="B">B</button>
+        <button value="C">C</button>
+      </Buttons>
     )
   }
 }
 
-class Parent extends React.Component {
+class Buttons extends React.Component {
+  constructor() {
+    super();
+    this.state = {selected: 'None'}
+  }
+  selectItem(selected) {
+    this.setState({selected});
+  }
   render() {
-    // let items = React.Children
-    //             .forEach(this.props.children,
-    //               child => console.log(child.props.className));
-    //let items = React.Children.toArray(this.props.children);
-    let items = React.Children.only(this.props.children) // expect only 1 child
-    console.log(items);
-    return null
+    // this.props.children isn't the actual DOM object, its a descriptor
+    // So we can't change props like child.props.... you can only read
+    // So we simply create new elements
+    let fn = child =>
+      React.cloneElement(child, {
+        onClick: this.selectItem.bind(this, child.props.value)
+      })
+    let items = React.Children.map(this.props.children, fn);
+    return (
+      <div>
+        <h2>You have Selected: {this.state.selected}</h2>
+        {items}
+      </div>
+    )
   }
 }
 
-// Export the componenet we created
 export default App
